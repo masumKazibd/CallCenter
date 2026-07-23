@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CallCenter.Api/CallCenter.Api.csproj" />
+  <Project Path="CallCenter.Application/CallCenter.Application.csproj" />
+  <Project Path="CallCenter.Domain/CallCenter.Domain.csproj" />
+  <Project Path="CallCenter.Infrastructure/CallCenter.Infrastructure.csproj" />
+</Solution>
