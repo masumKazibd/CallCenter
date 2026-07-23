@@ -1,4 +1,4 @@
-﻿using CallCenter.Domain.;
+﻿using CallCenter.Domain;
 using System;
 using System.Collections;
 using System.Collections.Generic;
