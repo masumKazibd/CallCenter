@@ -14,6 +14,15 @@ builder.Services.AddScoped<ICallService, CallService>();
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") // standard Angular port
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -26,6 +35,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAngular");
 app.MapControllers();
 app.Run();
  
