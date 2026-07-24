@@ -10,8 +10,8 @@ namespace CallCenter.Domain
     {
         public int Id { get; set; }
         public Enums.CallDirection Direction { get; set; }
-        public string FromNumber { get; set; }
-        public string ToNumber { get; set; }
+        public string FromNumber { get; set; } = string.Empty;
+        public string ToNumber { get; set; } = string.Empty;
         public Enums.CallStatus Status { get; set; }
 
         public int? AgentId { get; set; }
