@@ -1,20 +1,53 @@
 <div class="container mt-4">
   <h2 class="mb-4 text-primary">Call Center Dashboard</h2>
-   
+
+  <!-- Add Agent form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Add Agent</h5>
+      <div class="row g-2">
+        <div class="col-md-3">
+          <input class="form-control" placeholder="Full name" [(ngModel)]="newAgent.fullName">
+        </div>
+        <div class="col-md-3">
+          <input class="form-control" placeholder="Email" [(ngModel)]="newAgent.email">
+        </div>
+        <div class="col-md-2">
+          <input class="form-control" placeholder="Extension" [(ngModel)]="newAgent.extension">
+        </div>
+        <div class="col-md-2">
+          <input class="form-control" type="number" placeholder="Queue Id" [(ngModel)]="newAgent.queueId">
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary w-100" (click)="createAgent()">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   @if (agents.length > 0) {
-    <ul class="list-group"> 
-      @for (agent of agents; track $index) {
+    <ul class="list-group">
+      @for (agent of agents; track agent.id) {
         <li class="list-group-item d-flex justify-content-between align-items-center">
           <div>
             <strong>{{ agent.fullName }}</strong> (Ext: {{ agent.extension }})
           </div>
-          <span class="badge bg-info text-dark rounded-pill">{{ agent.status }}</span>
+          <div class="d-flex align-items-center gap-2">
+            <span [class]="'badge rounded-pill ' + statusClass(agent.status)">{{ agent.status }}</span>
+
+            <select class="form-select form-select-sm" style="width:auto"
+                    [ngModel]="agent.status" (ngModelChange)="changeStatus(agent, $event)">
+              @for (s of statuses; track s) {
+                <option [value]="s">{{ s }}</option>
+              }
+            </select>
+
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteAgent(agent.id)">Delete</button>
+          </div>
         </li>
       }
     </ul>
   } @else {
-    <div class="alert alert-warning" role="alert">
-      Loading agents or no agents available...
-    </div>
+    <div class="alert alert-warning" role="alert">No agents available. Add one above.</div>
   }
 </div>

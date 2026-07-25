@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Agent } from '../models/agent.model';
 
 @Injectable({
   providedIn: 'root'
@@ -9,20 +10,21 @@ export class AgentService {
   private http = inject(HttpClient);
   
   
-  private apiUrl = 'https://localhost:44301/api/Agents'; 
+  private baseUrl = 'https://localhost:44301/api/Agents'; 
 
-  getAgents() {
-    return this.http.get(this.apiUrl);
+  getAgents(): Observable<Agent[]> {
+    return this.http.get<Agent[]>(this.baseUrl);   
   }
 
-  createAgent(agentData: any) {
-    return this.http.post(this.apiUrl, agentData);
-  } 
-    updateStatus(id: number, status: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}/status`, { status });
-    }
+  createAgent(agent: Partial<Agent>): Observable<Agent> {
+    return this.http.post<Agent>(this.baseUrl, agent);
+  }
 
-    deleteAgent(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-    }
+  updateStatus(id: number, status: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${id}/status`, { status });
+  }
+
+  deleteAgent(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }
