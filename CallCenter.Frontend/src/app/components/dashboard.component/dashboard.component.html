@@ -1,0 +1,20 @@
+<div class="container mt-4">
+  <h2 class="mb-4 text-primary">Call Center Dashboard</h2>
+   
+  @if (agents.length > 0) {
+    <ul class="list-group"> 
+      @for (agent of agents; track $index) {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ agent.fullName }}</strong> (Ext: {{ agent.extension }})
+          </div>
+          <span class="badge bg-info text-dark rounded-pill">{{ agent.status }}</span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="alert alert-warning" role="alert">
+      Loading agents or no agents available...
+    </div>
+  }
+</div>
