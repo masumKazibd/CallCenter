@@ -42,7 +42,7 @@ namespace CallCenter.Api.Controllers
         }
 
         [HttpPut("{id:int}/status")]
-        public async Task<IActionResult> UpdateStatus(int id, AgentDTO dto)
+        public async Task<IActionResult> UpdateStatus(int id, UpdateStatusDTO dto)
         {
             var ok = await _service.UpdateStatusAsync(id, dto.Status);
             if (!ok)

@@ -14,4 +14,8 @@ namespace CallCenter.Domain.DTOs
         public int? QueueId { get; set; }
         public DateTime CreatedAt { get; set; }
     }
+    public class UpdateStatusDTO
+    {
+        public string Status { get; set; }
+    }
 }
