@@ -14,7 +14,7 @@ export class DashboardComponent implements OnInit {
 
   agents: Agent[] = []; 
   statuses = ['Offline', 'Available', 'OnCall', 'Wrapup', 'NotReady'];
-  newAgent = { fullName: '', email: '', extension: '', queueId: null as number | null };
+  newAgent = { fullName: '', email: '', extension: '', status: 'Offline', queueId: null as number | null };
 
   ngOnInit() {
     this.fetchAgents();
@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit {
   createAgent() {
     this.agentService.createAgent(this.newAgent).subscribe({
       next: () => {
-        this.newAgent = { fullName: '', email: '', extension: '', queueId: null };
+        this.newAgent = { fullName: '', email: '', extension: '', status: 'Offline', queueId: null };
         this.fetchAgents();
       },
       error: (err) => console.error('Failed to create agent:', err)
