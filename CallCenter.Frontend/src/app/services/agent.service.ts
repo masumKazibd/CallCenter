@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Agent } from '../models/agent.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,7 @@ export class AgentService {
   private http = inject(HttpClient);
   
   
-  private baseUrl = 'https://localhost:44301/api/Agents'; 
-
+  private baseUrl = `${environment.apiUrl}/simulation`; 
   getAgents(): Observable<Agent[]> {
     return this.http.get<Agent[]>(this.baseUrl);   
   }
