@@ -37,7 +37,8 @@ export class DashboardComponent implements OnInit {
   customerInfo = signal<any | null>(null);
   isSearching = signal<boolean>(false);
   searchError = signal<string>('');
-
+  customers = signal<any[]>([]); 
+  selectedCustomer = signal<any | null>(null);
 
 
   // Computed signal using the current agent ID to filter calls for that agent
@@ -51,6 +52,7 @@ export class DashboardComponent implements OnInit {
     this.loadAgents();
     this.loadCalls();
     this.signalrService.startConnection();
+    this.customerService.getAllCustomers().subscribe(res => this.customers.set(res));
   }
 
   loadAgents() { 
@@ -167,28 +169,20 @@ export class DashboardComponent implements OnInit {
     const seconds = (totalSeconds % 60).toString().padStart(2, '0');
     return `${minutes}:${seconds}`;
   }
+  filteredCustomers = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    if (!query) return this.customers();
+    
+    return this.customers().filter(c => 
+      c.name.toLowerCase().includes(query) || c.phone.includes(query)
+    );
+  });
 
-  searchCustomer() {
-    const query = this.searchQuery().trim();
-    if (!query) return;
+  viewCustomerDetails(customer: any) {
+    this.selectedCustomer.set(customer);
+  }
 
-    this.isSearching.set(true);
-    this.searchError.set('');
-    this.customerInfo.set(null);
- 
-    this.customerService.searchCustomer(query).subscribe({
-      next: (data) => {
-        if (data) {
-          this.customerInfo.set(data);
-        } else { 
-          this.searchError.set('No customer found with this name or phone number.');
-        }
-        this.isSearching.set(false);
-      },
-      error: () => {
-        this.searchError.set('An error occurred while searching.');
-        this.isSearching.set(false);
-      }
-    });
+  clearSelection() {
+    this.selectedCustomer.set(null);
   }
 }

@@ -15,6 +15,9 @@ export class CustomerService {
         
         return of(customer || null).pipe(delay(500)); 
     }
+    getAllCustomers(): Observable<any[]> {
+        return of(this.mockCustomers);  
+    }
   private mockCustomers = [
     {
       phone: '01711223344',
