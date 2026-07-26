@@ -12,7 +12,7 @@
         Completed, 
         Missed,
         Failed,
-        Abandoned 
+        Rejected
     }
     public enum AgentStatus 
     {
