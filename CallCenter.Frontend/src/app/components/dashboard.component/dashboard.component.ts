@@ -24,6 +24,11 @@ export class DashboardComponent implements OnInit {
   private callService = inject(CallService);
   agents = signal<any[]>([]);
   allCalls = signal<any[]>([]);
+  activeCall = signal<any | null>(null);  // for tracking the call time or call timer 
+
+
+  callDuration = signal<number>(0);
+  timerInterval: any;
 
   // Computed signal using the current agent ID to filter calls for that agent
   agentCalls = computed(() => {
@@ -65,28 +70,91 @@ export class DashboardComponent implements OnInit {
   acceptCall() {
     const call = this.signalrService.incomingCall();
     if (!call) return;
-    
-    this.agentService.updateStatus(call.agentId, 'OnCall').subscribe({
-      next: () => {
-        console.log('✅ Agent status updated to OnCall');
-        this.signalrService.incomingCall.set(null); // remove the popup after accepting
-        this.loadCalls(); // refresh the call history to reflect the accepted call
+     
+    const callId = call.id || call.Id;
+    const agentId = call.agentId || call.AgentId;
+
+    this.agentService.updateStatus(agentId, 'OnCall').subscribe({
+      next: () => { 
+        this.callService.updateCallStatus(callId, 'InProgress').subscribe({
+          next: () => {
+            console.log('✅ Call in progress');
+            this.activeCall.set(call);
+            this.signalrService.incomingCall.set(null);
+            this.startTimer();
+            this.loadCalls();
+          },
+          error: (err) => console.error('❌ Failed to update call status to InProgress:', err)
+        });
       },
       error: (err) => console.error('❌ Failed to update agent status:', err)
     }); 
   }
 
   rejectCall() {
-     const call = this.signalrService.incomingCall();
+    const call = this.signalrService.incomingCall();
     if (!call) return;
 
-    this.agentService.updateStatus(call.agentId, 'Available').subscribe({
-      next: () => {
-        console.log('✅ Agent status updated to Available');
-        this.signalrService.incomingCall.set(null); // remove the popup after rejecting
-        this.loadCalls(); // refresh the call history to reflect the rejected call
-      },
-      error: (err) => console.error('❌ Failed to update agent status:', err)
+    const callId = call.id || call.Id;
+    const agentId = call.agentId || call.AgentId;
+
+    this.callService.updateCallStatus(callId, 'Rejected').subscribe({
+      next: () => { 
+        this.agentService.updateStatus(agentId, 'Available').subscribe({
+          next: () => {
+            console.log('✅ Call Rejected & Agent is Available');
+            this.signalrService.incomingCall.set(null);
+            this.loadCalls(); 
+          },
+          error: (err) => console.error('❌ Failed to update agent status:', err)
+        });
+      }, 
+      error: (err) => console.error('❌ Failed to update call status to Rejected:', err)
     });
+  }
+
+  endCall() {
+    const call = this.activeCall();
+    if (!call) return;
+
+    const callId = call.id || call.Id;
+    const agentId = call.agentId || call.AgentId;
+
+    this.stopTimer();
+ 
+    this.callService.updateCallStatus(callId, 'Completed').subscribe({
+      next: () => { 
+        this.agentService.updateStatus(agentId, 'Available').subscribe({
+          next: () => {
+            console.log('✅ Call Ended & Agent is Available');
+            this.activeCall.set(null); 
+            this.loadCalls(); 
+          },
+          error: (err) => console.error('❌ Failed to update agent status:', err)
+        });
+      },
+      error: (err) => console.error('❌ Failed to update call status to Completed:', err)
+    });
+  }
+
+  // --- Timer Helper Methods ---
+  startTimer() {
+    this.callDuration.set(0);
+    this.timerInterval = setInterval(() => { 
+      this.callDuration.update(val => val + 1);
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+  }
+
+  get formattedCallTime(): string {
+    const totalSeconds = this.callDuration();
+    const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
   }
 }
