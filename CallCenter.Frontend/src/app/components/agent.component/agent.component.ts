@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Agent } from '../../models/agent.model';
 import { AgentService } from '../../services/agent.service';
 import { FormsModule } from '@angular/forms';
@@ -14,9 +14,12 @@ import { QueueService } from '../../services/queue.service';
 })
 export class AgentComponent implements OnInit {
   private agentService = inject(AgentService);
-  private queueService = inject(QueueService);
+  private queueService = inject(QueueService); 
+  private cdr = inject(ChangeDetectorRef);
+
   queues: any[] = [];
   agents: Agent[] = []; 
+
   statuses = ['Offline', 'Available', 'OnCall', 'Wrapup', 'NotReady'];
   newAgent = { fullName: '', email: '', extension: '', status: 'Offline', queueId: null as number | null };
 
@@ -32,7 +35,10 @@ export class AgentComponent implements OnInit {
   }
   fetchAgents() {
     this.agentService.getAgents().subscribe({
-      next: (data) => this.agents = data,
+      next: (data) => {
+        this.agents = data;
+        this.cdr.detectChanges();  
+      },
       error: (err) => console.error('Failed to load agents:', err)
     });
   }
