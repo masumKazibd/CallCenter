@@ -35,6 +35,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.loadAgents();
     this.loadCalls();
+    this.signalrService.startConnection();
   }
 
   loadAgents() { 

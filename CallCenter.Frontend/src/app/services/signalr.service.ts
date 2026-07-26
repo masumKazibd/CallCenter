@@ -19,12 +19,14 @@ export class SignalrService {
       .withUrl(backendUrl)
       .withAutomaticReconnect()
       .build();
-
-    this.hubConnection
-      .start()
-      .then(() => console.log('✅ SignalR Connection Established Successfully!'))
-      .catch(err => console.error('❌ Error while starting SignalR connection: ', err));
-  }
+ 
+    this.hubConnection.start().then(() => {
+      console.log('✅ SignalR Connection Established Successfully!');
+       
+      this.addReceiveCallListener(); 
+    })
+    .catch(err => console.error('❌ Error while starting SignalR connection: ', err));
+}
 
   private addReceiveCallListener() {
     this.hubConnection.on('ReceiveCall', (callData) => {
