@@ -11,7 +11,7 @@ export class AgentService {
   private http = inject(HttpClient);
   
   
-  private baseUrl = `${environment.apiUrl}/simulation`; 
+  private baseUrl = `${environment.apiUrl}/agents`; 
   getAgents(): Observable<Agent[]> {
     return this.http.get<Agent[]>(this.baseUrl);   
   }
