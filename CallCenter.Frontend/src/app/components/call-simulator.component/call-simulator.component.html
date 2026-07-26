@@ -1,0 +1,36 @@
+<div class="container mt-5">
+      <div class="card shadow-sm" style="max-width: 500px; margin: auto;">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Simulate Inbound Call</h5>
+        </div>
+        
+        <div class="card-body">
+          <!-- Phone Number Field -->
+          <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Customer Phone Number</label>
+            <input type="text" id="phoneNumber" class="form-control" 
+                   [(ngModel)]="phoneNumber" placeholder="+88017XXXXXXXX">
+          </div>
+
+          <!-- Queue Dropdown -->
+          <div class="mb-3">
+            <label for="queueSelect" class="form-label">Select Queue (Department)</label>
+            <select id="queueSelect" class="form-select" [(ngModel)]="selectedQueueId">
+              <option value="" disabled selected>-- Select a Department --</option>
+              
+              <!-- ডায়নামিক কিউ লিস্ট লোড করা হচ্ছে -->
+              @for (queue of queues(); track queue.id) {
+                <option [value]="queue.id">{{ queue.name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Generate Call Button -->
+          <button class="btn btn-success w-100" 
+                  (click)="generateCall()" 
+                  [disabled]="!phoneNumber || !selectedQueueId">
+            Generate Call
+          </button>
+        </div>
+      </div>
+    </div>
