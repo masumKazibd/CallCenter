@@ -9,16 +9,16 @@ namespace CallCenter.Infrastructure.Services
 {
     public class AgentService : IAgentService
     {
-        private readonly AppDbContext _db;
+        private readonly AppDbContext _dbContext;
 
-        public AgentService(AppDbContext db)
+        public AgentService(AppDbContext dbContext)
         {
-            _db = db;
+            _dbContext = dbContext;
         }
 
         public async Task<IEnumerable<AgentDTO>> GetAllAsync()
         {
-            var agents = await _db.Agents.ToListAsync();
+            var agents = await _dbContext.Agents.ToListAsync();
 
             var result = new List<AgentDTO>();
             foreach (var a in agents)
@@ -39,7 +39,7 @@ namespace CallCenter.Infrastructure.Services
 
         public async Task<AgentDTO?> GetByIdAsync(int id)
         {
-            var a = await _db.Agents.FindAsync(id);
+            var a = await _dbContext.Agents.FindAsync(id);
             if (a == null)
             {
                 return null;
@@ -68,8 +68,8 @@ namespace CallCenter.Infrastructure.Services
                 Status = AgentStatus.Offline
             };
 
-            _db.Agents.Add(agent);
-            await _db.SaveChangesAsync();
+            _dbContext.Agents.Add(agent);
+            await _dbContext.SaveChangesAsync();
 
             dto.Id = agent.Id;
             dto.Status = agent.Status.ToString();
@@ -109,5 +109,25 @@ namespace CallCenter.Infrastructure.Services
             await _db.SaveChangesAsync();
             return true;
         }
+        public async Task<AgentDTO?> GetAvailableAgentByQueueAsync(int queueId)
+        {
+            var agent = await _dbContext.Agents.FirstOrDefaultAsync(a => a.QueueId == queueId && a.Status == AgentStatus.Available);
+            if (agent == null)
+            {
+                return null;
+            }
+
+            return new AgentDTO
+            {
+                Id = agent.Id,
+                FullName = agent.FullName,
+                Email = agent.Email,
+                Extension = agent.Extension,
+                Status = agent.Status.ToString(),
+                QueueId = agent.QueueId,
+                CreatedAt = agent.CreatedAt
+            };
+        }
+
     }
 }

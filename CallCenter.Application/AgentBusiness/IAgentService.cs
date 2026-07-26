@@ -12,5 +12,6 @@ namespace CallCenter.Application.Services
         Task<AgentDTO> CreateAsync(AgentDTO dto);
         Task<bool> UpdateStatusAsync(int id, string status);
         Task<bool> DeleteAsync(int id);
+        Task<AgentDTO?> GetAvailableAgentByQueueAsync(int queueId);
     }
 }
