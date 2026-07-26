@@ -1,6 +1,6 @@
 ﻿using CallCenter.Application.AgentBusiness;
 using CallCenter.Application.Services;
-using CallCenter.Domain.DTOs;
+using CallCenter.Domain.DTOs; 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -8,7 +8,7 @@ namespace CallCenter.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SimulationController : Controller
+    public class SimulationController : ControllerBase
     {
         private readonly IHubContext<CallHub.CallHub> _hubContext;
         private readonly IAgentService _agentService;
@@ -32,21 +32,22 @@ namespace CallCenter.Api.Controllers
                 {
                     return BadRequest(new { Message = "No available agents in this queue right now." });
                 }
-                 
-                var newCall = new
+
+                var newCallDto = new CallDTO
                 {
-                    CustomerPhoneNumber = request.CustomerPhoneNumber,
+                    FromNumber = request.CustomerPhoneNumber,
+                    ToNumber = "System",  
+                    Direction = "Inbound",
                     QueueId = request.QueueId,
-                    AssignedAgentId = availableAgent.Id,
-                    Status = "Ringing",
-                    Timestamp = DateTime.UtcNow
+                    AgentId = availableAgent.Id,
+                    Status = "Ringing"
                 };
 
-                // await _callService.CreateCallAsync(newCall);  
-                 
-                await _hubContext.Clients.All.SendAsync("ReceiveCall", newCall);
+                var savedCall = await _callService.CreateAsync(newCallDto);
 
-                return Ok(new { Message = "Call generated and routed successfully!", CallDetails = newCall });
+                await _hubContext.Clients.All.SendAsync("ReceiveCall", savedCall);
+
+                return Ok(new { Message = "Call generated and routed successfully!", CallDetails = savedCall });
             }
             catch (Exception ex)
             {

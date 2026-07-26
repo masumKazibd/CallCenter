@@ -79,7 +79,7 @@ namespace CallCenter.Infrastructure.Services
 
         public async Task<bool> UpdateStatusAsync(int id, string status)
         {
-            var agent = await _db.Agents.FindAsync(id);
+            var agent = await _dbContext    .Agents.FindAsync(id);
             if (agent == null)
             {
                 return false;
@@ -93,20 +93,20 @@ namespace CallCenter.Infrastructure.Services
             }
 
             agent.Status = parsed;
-            await _db.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var agent = await _db.Agents.FindAsync(id);
+            var agent = await _dbContext.Agents.FindAsync(id);
             if (agent == null)
             {
                 return false;
             }
 
-            _db.Agents.Remove(agent);
-            await _db.SaveChangesAsync();
+            _dbContext.Agents.Remove(agent);
+            await _dbContext.SaveChangesAsync();
             return true;
         }
         public async Task<AgentDTO?> GetAvailableAgentByQueueAsync(int queueId)
