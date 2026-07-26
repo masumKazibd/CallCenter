@@ -13,6 +13,8 @@ namespace CallCenter.Domain.DTOs
         public string Status { get; set; }
         public int? QueueId { get; set; }
         public DateTime CreatedAt { get; set; }
+        //custom
+        public string? QueueName { get; set; }
     }
     public class UpdateStatusDTO
     {

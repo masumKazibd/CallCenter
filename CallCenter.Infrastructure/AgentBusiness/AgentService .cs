@@ -18,11 +18,13 @@ namespace CallCenter.Infrastructure.Services
 
         public async Task<IEnumerable<AgentDTO>> GetAllAsync()
         {
-            var agents = await _dbContext.Agents.ToListAsync();
+            var agents = await _dbContext.Agents.ToListAsync(); 
+            var queues = await _dbContext.Queues.ToListAsync();
 
             var result = new List<AgentDTO>();
             foreach (var a in agents)
             {
+                var queueName = queues.FirstOrDefault(q => q.Id == a.QueueId)?.Name;
                 result.Add(new AgentDTO
                 {
                     Id = a.Id,
@@ -31,6 +33,7 @@ namespace CallCenter.Infrastructure.Services
                     Extension = a.Extension,
                     Status = a.Status.ToString(),
                     QueueId = a.QueueId,
+                    QueueName = queueName,
                     CreatedAt = a.CreatedAt
                 });
             }
