@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { SignalrService } from '../../services/signalr.service'; 
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
+import { CustomerService } from '../../services/customer.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,13 +23,22 @@ export class DashboardComponent implements OnInit {
   public signalrService = inject(SignalrService);
   private agentService = inject(AgentService); 
   private callService = inject(CallService);
+  private customerService = inject(CustomerService);
+  
   agents = signal<any[]>([]);
   allCalls = signal<any[]>([]);
   activeCall = signal<any | null>(null);  // for tracking the call time or call timer 
-
-
   callDuration = signal<number>(0);
   timerInterval: any;
+
+
+  //for customer search & display
+  searchQuery = signal<string>('');
+  customerInfo = signal<any | null>(null);
+  isSearching = signal<boolean>(false);
+  searchError = signal<string>('');
+
+
 
   // Computed signal using the current agent ID to filter calls for that agent
   agentCalls = computed(() => {
@@ -156,5 +166,29 @@ export class DashboardComponent implements OnInit {
     const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
     const seconds = (totalSeconds % 60).toString().padStart(2, '0');
     return `${minutes}:${seconds}`;
+  }
+
+  searchCustomer() {
+    const query = this.searchQuery().trim();
+    if (!query) return;
+
+    this.isSearching.set(true);
+    this.searchError.set('');
+    this.customerInfo.set(null);
+ 
+    this.customerService.searchCustomer(query).subscribe({
+      next: (data) => {
+        if (data) {
+          this.customerInfo.set(data);
+        } else { 
+          this.searchError.set('No customer found with this name or phone number.');
+        }
+        this.isSearching.set(false);
+      },
+      error: () => {
+        this.searchError.set('An error occurred while searching.');
+        this.isSearching.set(false);
+      }
+    });
   }
 }
