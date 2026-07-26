@@ -1,3 +1,4 @@
+using CallCenter.Api.CallHub;
 using CallCenter.Application.AgentBusiness;
 using CallCenter.Application.Services;
 using CallCenter.Infrastructure.Data;
@@ -18,13 +19,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") // standard Angular port
+        policy.WithOrigins("http://localhost:4200") // Angular port
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 builder.Services.AddOpenApi();
-
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,5 +39,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("AllowAngular");
 app.MapControllers();
+app.MapHub<CallHub>("/callhub");
 app.Run();
  
