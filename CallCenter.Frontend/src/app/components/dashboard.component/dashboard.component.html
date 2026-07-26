@@ -1,13 +1,25 @@
-<nav class="navbar navbar-dark bg-dark px-4 shadow">
-  <a class="navbar-brand">Call Center Dashboard</a>
-  <div class="d-flex align-items-center">
-    <label class="text-white me-2">Act as:</label>
-    <select class="form-select w-auto" (change)="onAgentChange($event)">
-      <option value="">-- Select Agent --</option>
-      @for (agent of agents(); track agent.id) {
-        <option [value]="agent.id">{{ agent.fullName }} (Queue: {{ agent.queueName }})</option>
-      }
-    </select>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 shadow">
+  <a href="/" class="navbar-brand fw-bold" href="#">Call Center Platform</a>
+   
+  <div class="collapse navbar-collapse"> 
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <li class="nav-item">
+        <a href="/agent" class="nav-link text-white px-3" style="cursor: pointer;">Agents</a>
+      </li>
+      <li class="nav-item">
+        <a  href="/call-simulator" class="nav-link text-white px-3" style="cursor: pointer;">Simulate</a>
+      </li>
+    </ul>
+ 
+    <div class="d-flex align-items-center">
+      <label class="text-white me-2 fw-semibold">Act as:</label>
+      <select class="form-select w-auto" [ngModel]="authService.currentAgentId()" (change)="onAgentChange($event)">
+        <option [value]="null">-- Select Agent --</option>
+        @for (agent of agents(); track agent.id) {
+          <option [value]="agent.id">{{ agent.fullName }} (Queue: {{ agent.queueName }})</option>
+        }
+      </select>
+    </div>
   </div>
 </nav>
 
