@@ -5,7 +5,7 @@
         <select class="form-select w-auto" (change)="onAgentChange($event)">
           <option value="">-- Select Agent --</option>
           @for (agent of agents(); track agent.id) {
-            <option [value]="agent.id">{{ agent.fullName }} (Queue: {{ agent.queueId }})</option>
+            <option [value]="agent.id">{{ agent.fullName }} (Queue: {{ agent.queueName }})</option>
           }
         </select>
       </div>

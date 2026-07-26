@@ -6,4 +6,5 @@ export interface Agent {
   status: string;
   queueId?: number | null;
   createdAt: string;
+  queueName?: string;
 }

@@ -34,8 +34,11 @@
     <ul class="list-group">
       @for (agent of agents; track agent.id) {
         <li class="list-group-item d-flex justify-content-between align-items-center">
-          <div>
-            <strong>{{ agent.fullName }}</strong> (Ext: {{ agent.extension }})
+          <div class="md-4">
+            <strong>{{ agent.fullName }}</strong>
+          </div>
+          <div class="md-4">
+            <strong>{{ agent.queueName }}</strong>  
           </div>
           <div class="d-flex align-items-center gap-2">
             <span [class]="'badge rounded-pill ' + statusClass(agent.status)">{{ agent.status }}</span>
