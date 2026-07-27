@@ -52,7 +52,7 @@ namespace CallCenter.Infrastructure.Services
                 Status = CallStatus.Ringing,
                 AgentId = dto.AgentId,
                 QueueId = dto.QueueId,
-                StartedAt = DateTime.UtcNow
+                StartedAt = DateTime.Now
             };
 
             _db.Calls.Add(call);
