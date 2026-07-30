@@ -81,7 +81,7 @@ namespace CallCenter.Infrastructure.Services
             // when a call completes, stamp the end time and compute duration
             if (parsed == CallStatus.Completed)
             {
-                call.EndedAt = DateTime.UtcNow;
+                call.EndedAt = DateTime.Now;
                 call.DurationSeconds = (int)(call.EndedAt.Value - call.StartedAt).TotalSeconds;
             }
 
